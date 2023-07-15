@@ -1,0 +1,39 @@
+Voici les modifications a operer dans le code : 
+
+Les repertoires affiches dans le fileExplorerPannel doit etre wrape selon la largeur de l'ecran. Il ne devrait pas avoir de scrollbar horizontal mais que un scrollbar vertical. Ensuite lorsqu'on ouvre un repertoire depuis le FileExplorerPannel, le bouton back ne fonctionne pas. Il doit fonctionner a la fois sur le ModedTreeV2 tree et les boutons de FileExplorerPannel. Ne traite pas les 2 modifications en meme temps. Fait traite d'abord la premiere requete sur le wrap de contenu puis je dirait de traiter le probleme du bouton back pour alleger ton traitement. Je dois te menager un peu.
+
+
+
+
+Synchronisation de l'arbre avec le panneau explorateur :
+
+A chaque fois qu'on entre dans un dossier dans le panneau principal de l'explorateur, l'arbre aussi doit se positionner sur la repertoire selectionne. Le panneau explorateur doit donc avoir un equivalent de "getLastSelectedPathComponent()" et l'envoyer vers l'arbre pour que les deux aient un meme "getLastSelectedPathComponent()". L'arbre modifie donc son "LastSelectedPathComponent" avec le "getLastSelectedPathComponent()" du panneau principale en l'ecoutant. Ce qui sera plus facile pour planifier les actions pour la suite. 
+
+
+
+
+Actions et manipulations relatif au fichier :
+
+On utilisera java.io.File ou java.nio.File pour les operations
+Du point de vue du "JMenuItem[] item2" Les actions prendront une chaine de caractere en parametre qui est le chemin vers le fichier correspondant. Supprimer, renommer, copier et couper et propriete agira directement sur le fichier ou dossier du chemin. 
+- Supprimer : effacera le fichier pointe par le chamin ;
+- Renommer : changera directement le nom du fichier pointe ;
+- Copier : gardera dans l'attribut "temp" le chemin du fichier a copier et enregistre dans un attribut "copierOuCouper" la chaine "copie" pour specifier l'action que doit faire la methode "coller".
+- Couper : fera la meme chose que copier mais change la valeur de "copierOuCouper" sur "couper".
+- Coller : prend en parametre obligatoirement que le chemin du dossier selectionne par "getLastSelectedPathComponent()" synchronise dont j'ai detaille l'utilite plus tot et utilise copy ou move de nio.File pour faire l'operation et vide le contenu de "temp".
+- Propriete : quant a lui affiche cree une nouvelle fenetre avec le titre " "Poriete de" + <Nom du fichier> "et l'affiche a l'ecran 
+
+    - La fenetre sera creee dans une classe a part comme l'est la classe Fenetre c'est a dire que ses composant seront prepares dans une classe. Comme pour la classe des actions, elle prendra le chemin de la derniere element selectionne dans un String et extrait les informations ci-dessous du fichier correspondant si possible et l'affiche dans un panneau:
+        - Le nom du fichier ;
+        - Son chemin ;
+        - Le dossier parent ;
+        - Sa taille ; 
+        - Sa date de creation ou de modification ;
+        - Son extension : son type ;
+       (- Le nombre d'enfants d'un dossier ;)
+
+
+
+Dupliquer un objet instancie
+
+Comment dupliquer un objet ? J'aimerais creer une nouvelle fenetre sans recharger l'entierete du programme lorsqu'on appuye sur l'action "Ouvrir une nouvelle fenetre" de JMenuItem[0] item1 de la classe MenuNavigation.
