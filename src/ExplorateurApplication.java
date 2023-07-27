@@ -1,24 +1,23 @@
 package src;
 
-import src.interface_graphique.*;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
-// import java.io.File;
+import src.interfaceGraphique.Fenetre;
 
 class ExplorateurApplication {
     public static void main(String[] args) {
+        try {
+            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+            // UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            // UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         new Fenetre();
-        // File fichier = new File("C:/");
-        // for (File f : File.listRoots()) {
-        // System.out.println(f.getAbsolutePath());
-        // try{
-        // for (File nom : f.listFiles()) {
-
-        // System.out.print("\t\t" + ((nom.isDirectory()) ? nom.getName() + "/" :
-        // nom.getName()));
-        // }
-        // }
-        // catch(NullPointerException e){
-        // }
-        // }
     }
 }
