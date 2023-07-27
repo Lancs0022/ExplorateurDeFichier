@@ -46,7 +46,6 @@ public class MenuNavigation {
     private JMenu option1 = new JMenu("Fichiers");
     private JMenu option2 = new JMenu("Edition");
     
-    // private JMenu option3 = new JMenu("Sous fichier");
     private JMenuItem[] item1 = {
         new JMenuItem("Ouvrir une nouvelle fenetre", iconeNewfenetre),
         new JMenuItem("Ouvrir Powershell", iconeOpenPowershell),
@@ -96,17 +95,18 @@ public class MenuNavigation {
         interactionSurItem(this.item2ToolBar,modedTree);
     }
 
+    // Met a jour le chemin du repertoire actuelle dans le champs de texte "barreChemin"
     public void updateParentNodePath(String path) {
-        barreChemin.setText(path);
+        this.barreChemin.setText(path);
     }
 
     private void createToolbar() {
-        toolbar = new JToolBar();
-        toolbar.add(boutonRetour);
+        this.toolbar = new JToolBar();
+        this.toolbar.add(boutonRetour);
 
         for (JButton item : item2ToolBar) {
             // Pour chaque JMenuItem, on crée un JButton correspondant avec son icône
-                toolbar.add(item);
+                this.toolbar.add(item);
         }
     }
 
@@ -132,7 +132,7 @@ public class MenuNavigation {
     }
 
     public JToolBar getToolbar() {
-        return toolbar;
+        return this.toolbar;
     }
 
     public JTextField getTextField() {
@@ -285,31 +285,9 @@ public class MenuNavigation {
                 System.exit(0);
             }
         });
-
-        // // Ajoute un listener pour COUPER un fichier
-        // item[3].addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-                
-        //     }
-        // });
-
-        // // Ajoute un listener pour COLLER un fichier
-        // item[4].addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-                
-        //     }
-        // });
-
-        // // Ajoute un listener pour RENOMMER un fichier
-        // item[5].addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-                
-        //     }
-        // });
     }
+
+/*----------------------------------------------------------- Methodes de manipulation de fichier --------------------------------------------------------------- */
 
     private void creerNouveauDossier(String folderPath) {
         if (folderPath == null) {

@@ -1,16 +1,11 @@
 package src.interfaceGraphique.composantsPrincipales;
 
-import java.util.List;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Enumeration;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 /**
@@ -64,7 +59,7 @@ public class ModedTreeV2{
         if(this.oracine != null)
         this.oracine.removeAllChildren();
         setRacine(new DefaultMutableTreeNode("Ce PC"));
-        System.out.println("Appel du listeur de repertoire");
+        System.out.println("\nAppel du listeur de repertoire \n");
         // On commence par lister tous les repertoires racine et lettres du pc
         for (File racines : File.listRoots()) {
             DefaultMutableTreeNode peripheriquesPrincipales = new DefaultMutableTreeNode(racines.getAbsolutePath());
@@ -73,17 +68,18 @@ public class ModedTreeV2{
                 for (File fichierTemp_ : racines.listFiles()) {
                     // On finit par obtenir un noeud et on les ajoute 1 par 1
                     DefaultMutableTreeNode noeud = new DefaultMutableTreeNode(fichierTemp_.getName() + "\\");
-                    System.out.println("Valeurs de fichier temp et noeud : " + fichierTemp_ + " - " + noeud);
+                    System.out.println(noeud);
                     peripheriquesPrincipales.add(this.listFile(fichierTemp_, noeud));
                 }
             } catch (NullPointerException e) {}
             this.oracine.add(peripheriquesPrincipales);
         }
+        System.out.println("\nFin du listeur de repertoire \n");
     }
 
     // Verifie si un noeud de l'arbre est, ou non un fichier
     private DefaultMutableTreeNode listFile(File file, DefaultMutableTreeNode node) {
-        int count = 0;
+        int limiteur = 0;
         if (file.isFile())
             return new DefaultMutableTreeNode(file.getName());
         else {
@@ -94,9 +90,12 @@ public class ModedTreeV2{
             // Le code ci-dessous liste le contenu d'une repertoire
             // On boucle le tout jusqu'a la fin du tableau list
             for (File nom : list) {
-                count++;
-                // Pas plus de 5 enfants par noeud
-                if (count <= 10) {
+                limiteur++;
+                /*
+                 * Limiteur : permet de limiter le nombre de fichiers a afficher pour tous les repertoires
+                 * Permet d'accelerer le chargement de l'application
+                 */
+                if (limiteur <= 5) {
                     DefaultMutableTreeNode subNode;
                     if (nom.isDirectory()) {
                         System.out.println(nom);
@@ -115,17 +114,6 @@ public class ModedTreeV2{
 
 //------------------------------------------------------------------------------------------------------------------------//
 
-    // // Méthode pour actualiser l'arbre
-    // public void actualiserArbre() {
-    //     DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
-    //     // this.oracine.removeAllChildren();
-    //     listeurRepertoires();
-    //     this.setTree();
-    //     model.nodeStructureChanged(oracine);
-    //     model.reload();
-    //     System.out.println("Fin de l'actualisation");
-    // }
-
     /* 
         Place le Noeud actuel selectionne sur le noeud passe en parametre
         Methode utile pour synchoniser la selection depuis la classe PanneauExplorateur
@@ -136,6 +124,10 @@ public class ModedTreeV2{
         tree.scrollPathToVisible(path);
     }
 
+    /*
+     *  Fait resortir une chaine contenant le chemin absolu d'un fichier ou un repertoire 
+     *  a partir d'un chemin d'un noeud d'un arbre
+     */
     public String getAbsolutePath(TreePath treePath) {
         StringBuilder str = new StringBuilder();
     
@@ -181,95 +173,5 @@ public class ModedTreeV2{
     }
     public void setRacine(DefaultMutableTreeNode racine) {
         this.oracine = racine;
-    }
-
-    
-
-    /*      
-    *      Code residuelles 
-    *     ------------------
-    */
-
-    public List<List<String>> buildHierarchy(DefaultMutableTreeNode noeud) {
-        System.out.println("Debut de construction de la hierachie");
-        List<List<String>> hierarchy = new ArrayList<>();
-        // DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) tree.getModel().getRoot();
-        traverseHierarchy(noeud, hierarchy, 0);
-        System.out.println("Fin de construction de la hierachie");
-        return hierarchy;
-    }
-
-    private void traverseHierarchy(DefaultMutableTreeNode node, List<List<String>> hierarchy, int level) {
-        if (node == null) {
-            return;
-        }
-
-        if (hierarchy.size() <= level) {
-            hierarchy.add(new ArrayList<>());
-        }
-
-        List<String> levelList = hierarchy.get(level);
-        levelList.add(node.toString());
-
-        Enumeration<TreeNode> children = node.children();
-        while (children.hasMoreElements()) {
-            DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) children.nextElement();
-            traverseHierarchy(childNode, hierarchy, level + 1);
-        }
-    }
-
-    // private void getHierarchie(DefaultMutableTreeNode noeud){
-    //     List<List<String>> hierarchy = this.buildHierarchy(noeud);
-    //     for (List<String> level : hierarchy) {
-    //         for (String item : level) {
-    //         	System.out.print(item + "\t");
-    //         }
-    //         System.out.println();
-    //     }
-    // }
-
-    // public String getCheminNoeud(DefaultMutableTreeNode node) {
-    //     StringBuilder path = new StringBuilder();
-
-    //     // Parcours du chemin du nœud jusqu'à la racine
-    //     while (node != null) {
-    //         Object userObject = node.getUserObject();
-
-    //         // Vérification si le nœud représente un répertoire
-    //         if (userObject instanceof String) {
-    //             String nodeName = (String) userObject;
-    //             if (!nodeName.endsWith("\\")) {
-    //                 nodeName += "\\";
-    //             }
-    //             // Ajout du nom du répertoire au chemin
-    //             path.insert(0, nodeName);
-    //         }
-
-    //         node = (DefaultMutableTreeNode) node.getParent();
-    //     }
-
-    //     return path.toString();
-    // }
-
-    
-    // Cree un instance File depuis un noeud de l'arbre 
-    public File createFileOrStrFromNode(DefaultMutableTreeNode node) {
-        String filePath = getAbsolutePath(new TreePath(node.getPath()));
-        File file = new File(filePath);
-        if (!file.exists()) {
-            try {
-                if (file.createNewFile()) {
-                    DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file.getName());
-                    newNode.setAllowsChildren(false);
-                    DefaultTreeModel treeModel = (DefaultTreeModel) tree.getModel();
-                    treeModel.insertNodeInto(newNode, node, node.getChildCount());
-                    tree.scrollPathToVisible(new TreePath(newNode.getPath()));
-                    tree.setSelectionPath(new TreePath(newNode.getPath()));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return file;
     }
 }

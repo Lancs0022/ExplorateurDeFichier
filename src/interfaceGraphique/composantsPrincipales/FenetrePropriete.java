@@ -8,82 +8,92 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import java.awt.GridLayout;
 
+// Classe permettant d'afficher les proprietes d'un element. Elle est accessible depuis les proprietes du MenuNavigation
 public class FenetrePropriete extends JFrame {
 
-    private JLabel nameLabel;
-    private JTextField pathField;
-    private JTextField parentField;
-    private JTextField sizeField;
-    private JTextField dateField;
-    private JTextField typeField;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JLabel nameLabel;
+    private JTextField champsChemin;
+    private JTextField champParent;
+    private JTextField champTaille;
+    private JTextField champDate;
+    private JTextField champType;
 
     public FenetrePropriete(String filePath) {
-        // this.localModedTree = instanceTree;
         setTitle("Propriétés");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(6, 2, 10, 10));
 
+        // Initialisations des champs qui stockera les informations
         nameLabel = new JLabel();
-        pathField = new JTextField();
-        parentField = new JTextField();
-        sizeField = new JTextField();
-        dateField = new JTextField();
-        typeField = new JTextField();
+        champsChemin = new JTextField();
+        champParent = new JTextField();
+        champTaille = new JTextField();
+        champDate = new JTextField();
+        champType = new JTextField();
 
+        // Mise en place des champs dans la fenetre de propriete
         add(new JLabel("Nom :"));
         add(nameLabel);
         add(new JLabel("Chemin :"));
-        add(pathField);
+        add(champsChemin);
         add(new JLabel("Dossier parent :"));
-        add(parentField);
+        add(champParent);
         add(new JLabel("Taille :"));
-        add(sizeField);
+        add(champTaille);
         add(new JLabel("Date de modification :"));
-        add(dateField);
+        add(champDate);
         add(new JLabel("Type :"));
-        add(typeField);
+        add(champType);
+
         this.fillProperties(filePath);
+        System.out.println("Appel du fenetre de propriete");
     }
 
+    // S'occupe de remplir les proprietes
     public void fillProperties(String filePath) {
-        // filePath = this.localModedTree.getDerniereSelection();
-        
         File file = new File(filePath);
 
         nameLabel.setText(file.getName());
-        pathField.setText(file.getAbsolutePath());
-        parentField.setText(file.getParent());
-        sizeField.setText(formatSize(file.length()));
-        dateField.setText(formatDate(file.lastModified()));
-        typeField.setText(getFileType(file));
+        champsChemin.setText(file.getAbsolutePath());
+        champParent.setText(file.getParent());
+        champTaille.setText(formatSize(file.length()));
+        champDate.setText(formatDate(file.lastModified()));
+        champType.setText(getFileType(file));
 
         setVisible(true);
     }
 
-    private String formatSize(long size) {
-        if (size < 1024) {
-            return size + " octets";
-        } else if (size < 1024 * 1024) {
-            return String.format("%.2f Ko", size / 1024.0);
+    // Formate la taille obtenue d'un fichier en octets, ko ou Mo pour les plus grands
+    private String formatSize(long taille) {
+        if (taille < 1024) {
+            return taille + " octets";
+        } else if (taille < 1024 * 1024) {
+            return String.format("%.2f Ko", taille / 1024.0);
         } else {
-            return String.format("%.2f Mo", size / (1024.0 * 1024));
+            return String.format("%.2f Mo", taille / (1024.0 * 1024));
         }
     }
 
+    // Utilise l'objet SimpleDateFormat pour filtrer une date de type long
     private String formatDate(long timestamp) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return sdf.format(new Date(timestamp));
     }
 
+    // Recupere l'extension d'un fichier apres le dernier point de son nom
     private String getFileType(File file) {
         if (file.isDirectory()) {
             return "Dossier";
         } else {
-            String fileName = file.getName();
-            int dotIndex = fileName.lastIndexOf(".");
-            if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
-                return fileName.substring(dotIndex + 1).toUpperCase() + " File";
+            String nomFichier = file.getName();
+            int dernierPoint = nomFichier.lastIndexOf(".");
+            if (dernierPoint != -1 && dernierPoint < nomFichier.length() - 1) {
+                return nomFichier.substring(dernierPoint + 1).toUpperCase() + " File";
             } else {
                 return "Fichier";
             }

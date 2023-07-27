@@ -24,10 +24,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 
-// Cette classe creee un Pannel modifie pour afficher les enfants d'un dossier sous forme de bouton 
+// Cette classe est le point cental du projet. Elle creee un Pannel personnalise pour afficher les enfants d'un dossier sous forme de bouton 
 public class PanneauExplorateur extends JPanel {
 
-    private JTree localTree;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTree localTree;
     private JButton backButton;
     private JButton refreshButton;
     private JPanel panneauPrincipale;
@@ -42,12 +46,14 @@ public class PanneauExplorateur extends JPanel {
         this.localModedTree = instanceArbre;
         this.localTree = instanceArbre.getTree();
         this.localMenuNavigation = menu;
-        this.setLayout(new BorderLayout());
+        
         this.refreshButton = new JButton("Actualiser");
         this.backButton = new JButton("Retour", new ImageIcon("assets/icons8-back-30-6.png"));
         this.panneauPrincipale = new JPanel();
         this.panneauPrincipale.setLayout(new GridLayout(0, 4, 10, 10)); // Utilisation d'un GridLayout
+        this.setLayout(new BorderLayout());
         this.setBackground(Color.white);
+
         JScrollPane scrollSurPanneauPrincipale = new JScrollPane(panneauPrincipale);
         scrollSurPanneauPrincipale.setPreferredSize(new Dimension(500, 500));
 
@@ -55,19 +61,19 @@ public class PanneauExplorateur extends JPanel {
         this.add(backButton, BorderLayout.NORTH);
         this.add(scrollSurPanneauPrincipale, BorderLayout.CENTER);
         this.add(refreshButton, BorderLayout.SOUTH);
-        setEcouteurs();
         this.setComponentPopupMenu(menu.getPopupMenu());
+        setEcouteurs();
+
         System.out.println("PanneauExplorateur charge !");
     }
 
+    //  Appele le menu popup provenant de MenuNavigation
     private void showPopupMenu(MouseEvent e) {
         JPopupMenu popupMenu = this.getComponentPopupMenu();
         if (popupMenu != null) {
             popupMenu.show(e.getComponent(), e.getX(), e.getY());
         }
     }
-
-
 
     /* 
         Affiche l'integralite d'un dossier dans l'attribut "private JPanel panneauPrincipale", Panneau integrant l'ensemble des boutons
@@ -78,24 +84,33 @@ public class PanneauExplorateur extends JPanel {
         this.localModedTree.setSelectedNode(noeudParent);
         this.panneauPrincipale.removeAll();
 
-        // Les enfants extraits du noeud parent seront dans un enumeration
+        /* 
+            Les enfants extraits du noeud parent seront dans une collection d'enumerations de variables "TreeNode"
+            qui est le type de retour de la methode "children()" de DefaultMutableTreeNode
+            
+            la methode utilise est certes complique a mettre en place mais c'est le seul moyen trouve pour lister le
+            contenu d'une repertoire
+        */
         Enumeration<TreeNode> enfant = noeudParent.children();
 
-        while (enfant.hasMoreElements()) {  
+        while (enfant.hasMoreElements()) {
+            // Conversion des "TreeNode" obtenu en "DefaultMutableTreeNode"
             DefaultMutableTreeNode noeudEnfant = (DefaultMutableTreeNode) enfant.nextElement();
             String nomExtrait = noeudEnfant.toString();
             String cheminEnfant = convertirEnCheminAbsolu(noeudEnfant);
             File fichierEnfant = new File(cheminEnfant);
             boolean estDossier = fichierEnfant.isDirectory();
             
+            // Envoie un message a sur le champs de texte affichant la repertoire parent actuelle a MenuNavigation 
             String parentNodePath = convertirEnCheminAbsolu(noeudParent);
-            localMenuNavigation.updateParentNodePath(parentNodePath);
+            this.localMenuNavigation.updateParentNodePath(parentNodePath);
 
-            JButton button = new ModedBouton(nomExtrait, estDossier); // Utiliser le paramètre estDossier pour l'instanciation de ModedBouton
+            JButton button = new ModedBouton(nomExtrait, estDossier);
             button.setPreferredSize(new Dimension(120, 80));
             button.setVerticalTextPosition(SwingConstants.BOTTOM);
             button.setHorizontalTextPosition(SwingConstants.CENTER);
 
+            // Ajoute un ecouteur sur le clic droit d'un souris
             button.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased(MouseEvent e) {
@@ -110,7 +125,10 @@ public class PanneauExplorateur extends JPanel {
             });
 
 
-            // Écouteur pour détecter les clics sur les boutons de fichier/dossier
+            /*
+                Écouteur pour détecter les clics sur les boutons de fichier/dossier. 
+                IL faut 2 clics droits pour ouvrir un dossier ou fichier
+            */
             button.addActionListener(new ActionListener() {
                 private boolean isButtonClicked = false;
 
@@ -129,7 +147,6 @@ public class PanneauExplorateur extends JPanel {
                             // Mise à jour de la dernière sélection dans ModedTreeV2
                             String filePath = convertirEnCheminAbsolu(noeudEnfant);
                             localModedTree.setDerniereSelection(filePath);
-                            localModedTree.setSelectedNode(noeudEnfant);
                             System.out.println(filePath);
                             ouvrirFichier(cheminEnfant);
                         }
@@ -139,7 +156,7 @@ public class PanneauExplorateur extends JPanel {
                             localModedTree.setDerniereSelection(filePath);
                             //modedTree.setSelectedNode(noeudEnfant);
                             // System.out.println(filePath);
-                            System.out.println("!!!!".concat(localModedTree.getDerniereSelection()));
+                            System.out.println(localModedTree.getDerniereSelection());
                         button.setBackground(Color.BLUE);
                     }
                     dernierBoutonClique = button;
@@ -172,6 +189,7 @@ public class PanneauExplorateur extends JPanel {
         }
     }
 
+    // Permet d'ouvrir n'importe quel element, represente par son cemin absolu, par le systeme
     public static void ouvrirFichier(String cheminFichier) {
         if (Desktop.isDesktopSupported()) {
             try {
@@ -219,6 +237,8 @@ public class PanneauExplorateur extends JPanel {
             }
         });
     }
+
+    // Malheureusement non fonctionnel pour des raisons inconnus
     public void actualiserArbre() {
         localModedTree.getRacine().removeAllChildren();
         localModedTree.listeurRepertoires(); // Mettre à jour l'arborescence dans ModedTreeV2

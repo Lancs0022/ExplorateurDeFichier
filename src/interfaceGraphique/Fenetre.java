@@ -12,6 +12,10 @@ import java.awt.BorderLayout;
 import java.awt.Image;
 
 public class Fenetre extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ModedTreeV2 tree = new ModedTreeV2();
 	private MenuNavigation menu = new MenuNavigation(tree);
 	private PanneauExplorateur explorer = new PanneauExplorateur(tree, menu);
@@ -42,18 +46,6 @@ public class Fenetre extends JFrame {
 		this.setLayout(new BorderLayout());
 		this.getContentPane().add(composantsCentre, BorderLayout.CENTER);
 		this.getContentPane().add(composantsNord, BorderLayout.NORTH);
-		// System.out.println(menu.toString(menu.getItems2()) + "Affichage des elements du menu");
-
-
-		// List<List<String>> hierarchy = tree.buildHierarchy();
-
-		// // Afficher le tableau hiérarchisé
-		// for (List<String> level : hierarchy) {
-		// 	for (String item : level) {
-		// 		System.out.print(item + "\t");
-		// 	}
-		// 	System.out.println();
-		// }
 
 		this.setVisible(true);
 	}
