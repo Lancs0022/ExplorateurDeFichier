@@ -1,4 +1,4 @@
-package src.interfaceGraphique;
+package src.interfacegraphique;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -6,7 +6,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import src.interfaceGraphique.composantsPrincipales.*;
+import src.interfacegraphique.composantsprincipales.MenuNavigation;
+import src.interfacegraphique.composantsprincipales.ModedTreeV2;
+import src.interfacegraphique.composantsprincipales.PanneauExplorateur;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
@@ -41,7 +43,7 @@ public class Fenetre extends JFrame {
         composantsNord.setLayout(new BorderLayout());
         composantsNord.add(menu.getMenu(), BorderLayout.NORTH);
         composantsNord.add(menu.getToolbar(),BorderLayout.CENTER);
-		composantsNord.add(menu.getTextField(), BorderLayout.SOUTH);
+		composantsNord.add(menu.getChampsTextuel(), BorderLayout.SOUTH);
 
 		this.setLayout(new BorderLayout());
 		this.getContentPane().add(composantsCentre, BorderLayout.CENTER);

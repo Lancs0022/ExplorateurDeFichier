@@ -1,4 +1,4 @@
-package src.interfaceGraphique.composantsPrincipales;
+package src.interfacegraphique.composantsprincipales;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

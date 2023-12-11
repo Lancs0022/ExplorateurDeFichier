@@ -1,4 +1,4 @@
-package src.interfaceGraphique.composantsPrincipales;
+package src.interfacegraphique.composantsprincipales;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;

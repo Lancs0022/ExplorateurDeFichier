@@ -1,4 +1,4 @@
-package src.interfaceGraphique.composantsPrincipales;
+package src.interfacegraphique.composantsprincipales;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -11,6 +11,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+
+import src.interfacegraphique.Fenetre;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
@@ -79,7 +82,7 @@ public class PanneauExplorateur extends JPanel {
         Affiche l'integralite d'un dossier dans l'attribut "private JPanel panneauPrincipale", Panneau integrant l'ensemble des boutons
     */
 
-    private void showChildren(DefaultMutableTreeNode noeudParent) {
+    void showChildren(DefaultMutableTreeNode noeudParent) {
         // On retire tout les composant du panneau avant tout : permet d'actualiser le panneau
         this.localModedTree.setSelectedNode(noeudParent);
         this.panneauPrincipale.removeAll();
@@ -178,7 +181,7 @@ public class PanneauExplorateur extends JPanel {
     }
 
     // Bouton retour du panneau
-    private void navigateBack() {
+    public void navigateBack() {
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) localTree.getLastSelectedPathComponent();
         if (selectedNode != null) {
             DefaultMutableTreeNode noeudParent = (DefaultMutableTreeNode) selectedNode.getParent();
@@ -245,5 +248,6 @@ public class PanneauExplorateur extends JPanel {
         DefaultTreeModel model = (DefaultTreeModel) localTree.getModel();
         DefaultMutableTreeNode racine = (DefaultMutableTreeNode) model.getRoot();
         showChildren(racine); // Mettre à jour l'affichage du panneau principal avec la nouvelle arborescence
+        new Fenetre();
     }
 }

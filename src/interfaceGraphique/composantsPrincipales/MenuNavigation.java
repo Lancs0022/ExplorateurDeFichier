@@ -1,39 +1,51 @@
-package src.interfaceGraphique.composantsPrincipales;
+package src.interfacegraphique.composantsprincipales;
 
+import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
-import src.interfaceGraphique.Fenetre;
+import src.interfacegraphique.Fenetre;
 
 public class MenuNavigation {
     private JMenuBar BarreDeMenu = new JMenuBar();
     private JToolBar toolbar;
     private JTextField barreChemin = new JTextField(20);
+    private JPanel champsTextuel;
+    // Nouveaux attributs pour le panneau de recherche
+    private JPanel recherchePanel;
+    private JTextField rechercheField;
+    private JButton rechercheButton;
     private JPopupMenu popupMenu = new JPopupMenu();
+    private ModedTreeV2 local_modedTree;
     private String temp;
     private String copierOuCouper;
-    private JButton boutonRetour;
+    // private JButton boutonRetour;
 
     private ImageIcon iconeNewfenetre = new ImageIcon("assets/icons8-new-window-24.png");
     private ImageIcon iconeOpenPowershell = new ImageIcon("assets/icons8-powershell-ise-24.png");
     private ImageIcon iconeFermer = new ImageIcon("assets/icons8-close-24(1).png");
-    private ImageIcon iconeRetour = new ImageIcon("assets/icons8-back-24-7.png");
+    // private ImageIcon iconeRetour = new ImageIcon("assets/icons8-back-24-7.png");
     private ImageIcon iconeDossier = new ImageIcon("assets/icons8-new-folder-24px.png");
     private ImageIcon iconeFichier = new ImageIcon("assets/icons8-new-file-24px.png");
     private ImageIcon iconeCopie = new ImageIcon("assets/icons8-copy-24.png");
@@ -85,15 +97,44 @@ public class MenuNavigation {
     };
 
     public MenuNavigation(ModedTreeV2 modedTree){
-        this.boutonRetour = new JButton("Retour", iconeRetour);
+        local_modedTree = modedTree;
         setAllForJMenuBar();
         createToolbar();
         setAllForPopupMenu();
+        setAllForChampsTextuel();
         interactionSurItem1(this.item1, modedTree);
         interactionSurItem(this.item2, modedTree);
         interactionSurItem(this.item2Popup, modedTree);
         interactionSurItem(this.item2ToolBar,modedTree);
     }
+
+    // Méthode pour afficher les résultats de la recherche dans une fenêtre séparée
+    private void afficherResultatsRecherche(ArrayList<String> results, ModedTreeV2 modedTree) {
+        if (results.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Aucun résultat trouvé.", "Résultats de recherche", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JPanel resultsPanel = new JPanel(new GridLayout(results.size(), 2));
+
+        // Créer des boutons de sélection pour chaque résultat
+        for (String result : results) {
+            JButton selectButton = new JButton("Sélectionner");
+            selectButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    local_modedTree.setSelectedNodeByPath(result);
+                }
+            });
+
+            resultsPanel.add(new JLabel(result));
+            resultsPanel.add(selectButton);
+        }
+
+        JScrollPane resultsScrollPane = new JScrollPane(resultsPanel);
+        JOptionPane.showMessageDialog(null, resultsScrollPane, "Résultats de recherche", JOptionPane.PLAIN_MESSAGE);
+    }
+
 
     // Met a jour le chemin du repertoire actuelle dans le champs de texte "barreChemin"
     public void updateParentNodePath(String path) {
@@ -101,13 +142,38 @@ public class MenuNavigation {
     }
 
     private void createToolbar() {
+        // this.boutonRetour = new JButton("Retour", iconeRetour);
         this.toolbar = new JToolBar();
-        this.toolbar.add(boutonRetour);
+        // this.toolbar.add(boutonRetour);
 
         for (JButton item : item2ToolBar) {
             // Pour chaque JMenuItem, on crée un JButton correspondant avec son icône
                 this.toolbar.add(item);
         }
+    }
+
+    private void setAllForChampsTextuel(){
+        // Initialisation du panneau de recherche
+        this.recherchePanel = new JPanel();
+        this.rechercheField = new JTextField(20);
+        this.rechercheButton = new JButton("Rechercher");
+        this.recherchePanel.add(rechercheField);
+        this.recherchePanel.add(rechercheButton);
+        // Création du panneau "hcampsTextuel" pour regrouper le JTextField et le panneau de recherche
+        this.champsTextuel = new JPanel(new BorderLayout());
+        this.champsTextuel.add(barreChemin, BorderLayout.CENTER);
+        this.champsTextuel.add(recherchePanel, BorderLayout.EAST);
+        // Ajouter l'ActionListener pour la recherche
+        rechercheButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String textToSearch = rechercheField.getText();
+                if (!textToSearch.isEmpty()) {
+                    ArrayList<String> results = local_modedTree.rechercherNoeuds(textToSearch);
+                    afficherResultatsRecherche(results, local_modedTree);
+                }
+            }
+        });
     }
 
     private void setAllForJMenuBar(){
@@ -137,6 +203,10 @@ public class MenuNavigation {
 
     public JTextField getTextField() {
         return this.barreChemin;
+    }
+
+    public JPanel getChampsTextuel() {
+        return champsTextuel;
     }
 
     public JPopupMenu getPopupMenu(){

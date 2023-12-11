@@ -1,11 +1,14 @@
-package src.interfaceGraphique.composantsPrincipales;
+package src.interfacegraphique.composantsprincipales;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 /**
@@ -95,7 +98,7 @@ public class ModedTreeV2{
                  * Limiteur : permet de limiter le nombre de fichiers a afficher pour tous les repertoires
                  * Permet d'accelerer le chargement de l'application
                  */
-                if (limiteur <= 5) {
+                if (limiteur <= 20) {
                     DefaultMutableTreeNode subNode;
                     if (nom.isDirectory()) {
                         System.out.println(nom);
@@ -174,4 +177,60 @@ public class ModedTreeV2{
     public void setRacine(DefaultMutableTreeNode racine) {
         this.oracine = racine;
     }
+
+    // Cette méthode permet de rechercher tous les nœuds de l'arbre qui contiennent une certaine chaîne de texte
+    public ArrayList<String> rechercherNoeuds(String texteRecherche) {
+        // results est une collection de String qui contiendra tous les occurences
+        ArrayList<String> results = new ArrayList<>();
+        // On parcours l'arborescence de l'arbre depuis la recine
+        Enumeration<TreeNode> enumeration = this.oracine.depthFirstEnumeration();
+
+        while (enumeration.hasMoreElements()) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) enumeration.nextElement();
+            String nodeText = node.toString();
+            if (nodeText.contains(texteRecherche.toLowerCase())) {
+                // On ajoute l'occurence trouve
+                results.add(getNodeAbsolutePath(node));
+            }
+        }
+        return results;
+    }
+
+    // Méthode pour obtenir le chemin absolu d'un noeud
+    private String getNodeAbsolutePath(DefaultMutableTreeNode node) {
+        StringBuilder path = new StringBuilder();
+        TreeNode[] nodes = node.getPath();
+        for (int i = 0; i < nodes.length; i++) {
+            if (i > 0) {
+                path.append(File.separator);
+            }
+            path.append(nodes[i].toString());
+        }
+        return path.toString();
+    }
+
+    // Méthode pour changer le noeud sélectionné en utilisant son chemin absolu
+    public void setSelectedNodeByPath(String path) {
+        DefaultMutableTreeNode node = findNodeByPath(path);
+        if (node != null) {
+            setSelectedNode(node);
+        }
+    }
+
+    // Méthode pour trouver un noeud à partir de son chemin absolu
+    private DefaultMutableTreeNode findNodeByPath(String path) {
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.tree.getModel().getRoot();
+        Enumeration<TreeNode> enumeration = root.breadthFirstEnumeration();
+
+        while (enumeration.hasMoreElements()) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) enumeration.nextElement();
+            String nodePath = getNodeAbsolutePath(node);
+            if (nodePath.equals(path)) {
+                return node;
+            }
+        }
+
+        return null;
+    }
 }
+

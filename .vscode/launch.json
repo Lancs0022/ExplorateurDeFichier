@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "ExplorateurApplication",
+            "request": "launch",
+            "mainClass": "src.ExplorateurApplication",
+            "projectName": "ExplorateurDeFichier"
+        },
+        {
             "name": "Java",
             "type": "java",
             "request": "launch",
